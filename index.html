@@ -1,14 +1,15 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>日期计算器</title>
+    <title>推理之径计算器</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             height: 100vh;
             margin: 0;
             background-color: #f0f0f0;
@@ -18,37 +19,116 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
         }
-        input, button {
-            margin: 10px 0;
+        h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            color: #555;
+        }
+        input[type="number"] {
+            padding: 8px;
+            font-size: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        p {
+            font-size: 0.9rem;
+            margin-top: 8px;
+            color: #666;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>日期计算器</h1>
-        <label for="dateInput">选择一个日期：</label>
-        <input type="date" id="dateInput">
-        <button onclick="calculateDays()">计算</button>
-        <p id="result"></p>
+        <h1>推理之径计算器</h1>
+        <p id="currentDate"></p>
+        <p id="timeDifference"></p>
+        <label for="curstep">请输入当前的步数：</label>
+        <input type="number" id="curstep">
+        <button onclick="calculate()">计算</button>
+        <p id="contribute1"></p>
+        <p id="contribute2"></p>
+        <p id="res1", style="color:red;"></p>
+        <p id="res2", style="color:blue;"></p>
+        <p id="res3", style="color:green;"></p>
     </div>
-    <script>
-        function calculateDays() {
-            const dateInput = document.getElementById('dateInput').value;
-            if (dateInput) {
-                const selectedDate = new Date(dateInput);
-                const currentDate = new Date();
-                const timeDifference = selectedDate - currentDate;
-                const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-                const resultElement = document.getElementById('result');
-                if (daysDifference >= 0) {
-                    resultElement.textContent = `距离选择的日期还有 ${daysDifference} 天。`;
-                } else {
-                    resultElement.textContent = `选择的日期已经过去了 ${Math.abs(daysDifference)} 天。`;
-                }
-            } else {
-                alert('请选择一个日期！');
-            }
+    <script> 
+        let day;
+        const diceStep = 3; 
+        const goal = 1528;
+        function calculate(){
+            var curstep = Number(document.getElementById("curstep").value);
+            const login = day * diceStep;//每日登录贡献的步数
+            const firstVic = day * 1.5 * diceStep + 14.7 * diceStep;//首胜贡献的步数 平时1.5 赛季末3.6
+            const twentySide = day * 14 + 21;//20面贡献的步数 平时14 赛季末17
+            const monthCard = day * 3 * diceStep;//月卡贡献的步数
+            const tuiliPoint1 = Math.ceil((goal - curstep - login - firstVic) / diceStep / (1/5 + day / 7) * 1000);
+            const tuiliPoint2 = Math.ceil((goal - curstep - login - firstVic - monthCard) / diceStep / (1/5 + day / 7) * 1000);
+            const tuiliPoint3 = Math.ceil((goal - curstep - login - firstVic - monthCard - twentySide) / diceStep / (1/5 + day / 7) * 1000);
+            const contribute1 = document.getElementById('contribute1');
+            contribute1.textContent = `每日登录贡献 ${login} 步，首胜贡献 ${firstVic} 步`;
+            const contribute2 = document.getElementById('contribute2');
+            contribute2.textContent = `月卡贡献 ${monthCard} 步，20面贡献 ${twentySide} 步`;
+            const res1 = document.getElementById('res1');
+            res1.textContent = `不买月卡20面，每周需要打 ${tuiliPoint1} 个推理积分。`;
+            const res2 = document.getElementById('res2');
+            res2.textContent = `买月卡，每周需要打 ${tuiliPoint2} 个推理积分。`;
+            const res3 = document.getElementById('res3');
+            res3.textContent = `买月卡和20面，每周需要打 ${tuiliPoint3} 个推理积分。`;
         }
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function displayCurrentDate() {
+            const currentDateElement = document.getElementById('currentDate');
+            const now = new Date();
+            currentDateElement.textContent = `今天是：${formatDate(now)}`;
+        }
+
+        function calculateTimeDifference() {
+            const targetDate = new Date('2024-09-01');
+            const now = new Date();
+            const timeDifference = targetDate - now;
+            day = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+            const timeDifferenceElement = document.getElementById('timeDifference');
+            timeDifferenceElement.textContent = `距离赛季末（2024-09-01）还有 ${day} 天。`;
+        }
+
+        function init() {
+            displayCurrentDate();
+            calculateTimeDifference();
+        }
+        window.onload = init;
     </script>
 </body>
+</html>
+
