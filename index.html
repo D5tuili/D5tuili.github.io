@@ -20,8 +20,8 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
-            max-width: 400px;
-            width: 90%;
+            max-width: 500px;
+            width: 95%;
         }
         h1 {
             color: #333;
@@ -66,6 +66,8 @@
         #options {
             display: none;
             margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: space-between;
         }
         option-item {
             flex: 1;
@@ -88,32 +90,34 @@
         <button class="toggle-button" onclick="toggleOptions()">设置选项</button>
         <div id="options">
             <div class="option-item">
-                <label for="diceStep">平均骰子步数：</label>
+                <label for="diceStep">平均骰子步数(1-4)：</label>
                 <input type="number" id="diceStep" value="3">
             </div>
             <div class="option-item">
-                <label for="loginDays">每周登录天数：</label>
+                <label for="loginDays">每周登录天数(0-7)：</label>
                 <input type="number" id="loginDays" value="7">
             </div>
             <div class="option-item">
-                <label for="victoryDays">每周首胜天数：</label>
+                <label for="victoryDays">每周首胜天数(0-7)：</label>
                 <input type="number" id="victoryDays" value="7">
             </div>
             <div class="option-item">
-                <label for="monthDays">月卡天数：</label>
+                <label for="monthDays">月卡天数(0-剩余天数)：</label>
                 <input type="number" id="monthDays">
             </div>
             <div class="option-item">
-                <label for="twentyDays">20面骰天数：</label>
+                <label for="twentyDays">20面骰天数(0-剩余天数)：</label>
                 <input type="number" id="twentyDays">
             </div>
         </div>
         <button onclick="calculate()">计算</button>
+        <div id="result">
         <p id="contribute1"></p>
         <p id="contribute2"></p>
         <p id="res1", style="color:red;"></p>
         <p id="res2", style="color:blue;"></p>
         <p id="res3", style="color:green;"></p>
+        </div>
     </div>
     <script> 
         let day;
@@ -135,8 +139,7 @@
             var monthDays = Number(document.getElementById("monthDays").value);
             var twentyDays = Number(document.getElementById("twentyDays").value);
             const login = (day / 7 * loginDays * diceStep).toFixed(1);//每日登录贡献的步数
-            const firstVic = (day / 7 * loginDays * 1.5 * diceStep + 2.1 * victoryDays * diceStep).toFixed(1);//首胜贡献的步数 平时1.5 赛季末3.6
-            
+            const firstVic = (day / 7 * victoryDays* 1.5 * diceStep + 2.1 * victoryDays * diceStep).toFixed(1);//首胜贡献的步数 平时1.5 赛季末3.6
             var twentySide;
             if (twentyDays >= 7)
               twentySide = twentyDays * 14 + 21;//20面贡献的步数 平时14 赛季末17
@@ -154,15 +157,15 @@
             const res1 = document.getElementById('res1');
             if (tuiliPoint1 > 0)
               res1.textContent = `不买月卡20面，每周需要打 ${tuiliPoint1} 个推理积分。`;
-            else res1.textContent = `不买月卡20面，也无需额外获取推理积分`;
+            else res1.textContent = `不买月卡20面，除首胜外，无需额外获取推理积分`;
             const res2 = document.getElementById('res2');
             if (tuiliPoint2 > 0)
               res2.textContent = `买月卡，每周需要打 ${tuiliPoint2} 个推理积分。`;
-            else  res2.textContent = `买月卡，无需额外获取推理积分`;
+            else  res2.textContent = `买月卡，除首胜外，无需额外获取推理积分`;
             const res3 = document.getElementById('res3');
             if (tuiliPoint3 > 0)
                res3.textContent = `买月卡和20面，每周需要打 ${tuiliPoint3} 个推理积分。`;
-            else res3.textContent = `买月卡和20面，无需额外获取推理积分`;
+            else res3.textContent = `买月卡和20面，除首胜外，无需额外获取推理积分`;
         }
 
         function formatDate(date) {
