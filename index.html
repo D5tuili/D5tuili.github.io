@@ -204,7 +204,7 @@
             const targetDate = new Date('2024-09-26');
             const now = new Date();
             const timeDifference = targetDate - now;
-            day = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+            day = Math.ceil(timeDifference / (1000 * 60 * 60 * 24)) - 1;
             const timeDifferenceElement = document.getElementById('timeDifference');
             timeDifferenceElement.textContent = `距离赛季结束（2024-09-26）还有 ${day} 天。`;
         }
