@@ -85,8 +85,10 @@
         <h1>推理之径计算器</h1>
         <p id="currentDate"></p>
         <p id="timeDifference"></p>
-        <label for="curstep">请输入当前的步数：</label>
+        <label for="curstep">当前步数：</label>
         <input type="number" id="curstep">
+        <label for="weekpoint">每周预计打推理积分(仅手动模式需填)：</label>
+        <input type="number" id="weekpoint">
         <button class="toggle-button" onclick="toggleOptions()">设置选项</button>
         <div id="options">
             <div class="option-item">
@@ -114,6 +116,7 @@
         <div id="result">
         <p id="contribute1"></p>
         <p id="contribute2"></p>
+        <p id="contribute3"></p>
         <p id="res1", style="color:red;"></p>
         <p id="res2", style="color:blue;"></p>
         <p id="res3", style="color:green;"></p>
@@ -141,35 +144,48 @@
             var victoryDays = Number(document.getElementById("victoryDays").value);
             var monthDays = Number(document.getElementById("monthDays").value);
             var twentyDays = Number(document.getElementById("twentyDays").value);
-            const login = (day / 7 * loginDays * diceStep).toFixed(1);//每日登录贡献的步数
-            const firstVic = (day / 7 * victoryDays* 1.5 * diceStep + 2.1 * victoryDays * diceStep).toFixed(1);//首胜贡献的步数 平时1.5 赛季末3.6
+            var check = document.getElementById("weekpoint").value;
+            var weekpoint = Number(check);
+            const login = Number((day / 7 * loginDays * diceStep).toFixed(1));//每日登录贡献的步数
+            const firstVic = Number((day / 7 * victoryDays* 1.5 * diceStep + 2.1 * victoryDays * diceStep).toFixed(1));//首胜贡献的步数 平时1.5 赛季末3.6
             var twentySide;
             if (twentyDays >= 7)
-              twentySide = twentyDays * 14 + 21;//20面贡献的步数 平时14 赛季末17
+              twentySide =  Number(twentyDays * 14 + 21);//20面贡献的步数 平时14 赛季末17
             else
-              twentySide = twentyDays * 17;
-            //const twentySide = 125;
-            const monthCard = monthDays * 3 * diceStep;//月卡贡献的步数
+              twentySide = Number(twentyDays * 17);
+            const monthCard = Number(monthDays * 3 * diceStep);//月卡贡献的步数
             const tuiliPoint1 = Math.ceil((goal - curstep - login - firstVic) / diceStep / (1/5 + day / 7) * 1000);
             const tuiliPoint2 = Math.ceil((goal - curstep - login - firstVic - monthCard) / diceStep / (1/5 + day / 7) * 1000);
             const tuiliPoint3 = Math.ceil((goal - curstep - login - firstVic - monthCard - twentySide) / diceStep / (1/5 + day / 7) * 1000);
+            const tuiliStep = Number(((day / 7 + 1 / 5) * weekpoint * diceStep / 1000).toFixed(1));
+            const step1 = curstep + tuiliStep + login + firstVic;
+            const step2 = curstep + tuiliStep + login + firstVic + monthCard;
+            const step3 = curstep + tuiliStep + login + firstVic + monthCard + twentySide;
             const contribute1 = document.getElementById('contribute1');
-            contribute1.textContent = `每日登录贡献 ${login} 步，首胜贡献 ${firstVic} 步`;
             const contribute2 = document.getElementById('contribute2');
-            contribute2.textContent = `月卡贡献 ${monthCard} 步，20面贡献 ${twentySide} 步`;
             const res1 = document.getElementById('res1');
-            if (tuiliPoint1 > 0)
-              res1.textContent = `不买月卡20面，每周需要打 ${tuiliPoint1} 个推理积分。`;
-            else res1.textContent = `不买月卡20面，除首胜外，无需额外获取推理积分`;
             const res2 = document.getElementById('res2');
-            if (tuiliPoint2 > 0)
-              res2.textContent = `买月卡，每周需要打 ${tuiliPoint2} 个推理积分。`;
-            else  res2.textContent = `买月卡，除首胜外，无需额外获取推理积分`;
             const res3 = document.getElementById('res3');
-            if (tuiliPoint3 > 0)
-               res3.textContent = `买月卡和20面，每周需要打 ${tuiliPoint3} 个推理积分。`;
-            else res3.textContent = `买月卡和20面，除首胜外，无需额外获取推理积分`;
+            contribute1.textContent = `每日登录贡献 ${login} 步，首胜贡献 ${firstVic} 步`;
+            contribute2.textContent = `月卡贡献 ${monthCard} 步，20面贡献 ${twentySide} 步`;
+            if (check.trim() === ""){
+                if (tuiliPoint1 > 0)
+                 res1.textContent = `不买月卡20面，每周需要打 ${tuiliPoint1} 个推理积分。`;
+                else res1.textContent = `不买月卡20面，除首胜外，无需额外获取推理积分`;
+                if (tuiliPoint2 > 0)
+                 res2.textContent = `买月卡，每周需要打 ${tuiliPoint2} 个推理积分。`;
+                else  res2.textContent = `买月卡，除首胜外，无需额外获取推理积分`;
+                if (tuiliPoint3 > 0)
+                  res3.textContent = `买月卡和20面，每周需要打 ${tuiliPoint3} 个推理积分。`;
+                else res3.textContent = `买月卡和20面，除首胜外，无需额外获取推理积分`;
+            }else{
+                const contribute3 = document.getElementById('contribute3');
+                contribute3.textContent = `推理积分贡献 ${tuiliStep} 步`;
+                res1.textContent = `不买月卡20面，可以走到${step1}步 `;
+                res2.textContent = `买月卡，可以走到${step2}步 `;
+                res3.textContent = `买月卡20面，可以走到${step3}步 `;
         }
+    }
 
         function formatDate(date) {
             const year = date.getFullYear();
